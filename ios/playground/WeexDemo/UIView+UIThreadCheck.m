@@ -23,13 +23,13 @@
 
 - (void)wx_setNeedsLayout
 {
-    WXCheckUIThread();
+//    WXCheckUIThread();
     [self wx_setNeedsLayout];
 }
 
 - (void)wx_setNeedsDisplay
 {
-    WXCheckUIThread();
+//    WXCheckUIThread();
     [self wx_setNeedsDisplay];
 }
 

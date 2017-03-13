@@ -30,6 +30,10 @@
 		846FC8DB1E1B853600949E7D /* WXATViewHierarchyPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = DCABAFF21D029685001C8592 /* WXATViewHierarchyPlugin.m */; };
 		84D7CAC71CE3266C00D48D46 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7475ACA01CD8444A0044E96C /* libsqlite3.0.tbd */; };
 		8A0B5EFFF75BF82EA481983D /* libPods-WeexUITestDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E48C20F443AA337D1FE97622 /* libPods-WeexUITestDemo.a */; };
+		C47D8E3F1E7243F00077172F /* WXMapViewComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = C47D8E3A1E7243F00077172F /* WXMapViewComponent.m */; };
+		C47D8E401E7243F00077172F /* WXMapViewMarkerComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = C47D8E3C1E7243F00077172F /* WXMapViewMarkerComponent.m */; };
+		C47D8E411E7243F00077172F /* WXMapViewModule.m in Sources */ = {isa = PBXBuildFile; fileRef = C47D8E3E1E7243F00077172F /* WXMapViewModule.m */; };
+		C47D8E441E7245CB0077172F /* WXImgLoaderImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = C47D8E431E7245CB0077172F /* WXImgLoaderImpl.m */; };
 		DC5E503E1D0D97130059F0EB /* weex.png in Resources */ = {isa = PBXBuildFile; fileRef = DC5E503C1D0D97130059F0EB /* weex.png */; };
 		DC5E503F1D0D97130059F0EB /* weex@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DC5E503D1D0D97130059F0EB /* weex@2x.png */; };
 		DC65C4FA1CEB032F00B2F84F /* bundlejs in Resources */ = {isa = PBXBuildFile; fileRef = DC65C4F91CEB032F00B2F84F /* bundlejs */; };
@@ -87,6 +91,14 @@
 		775BEE9A1C1E8ECC008D1629 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84361D751CA10F8E00F43825 /* WeexUITestDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeexUITestDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9420131417A731ED089B0814 /* Pods-WeexDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WeexDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-WeexDemo/Pods-WeexDemo.release.xcconfig"; sourceTree = "<group>"; };
+		C47D8E391E7243F00077172F /* WXMapViewComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXMapViewComponent.h; sourceTree = "<group>"; };
+		C47D8E3A1E7243F00077172F /* WXMapViewComponent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXMapViewComponent.m; sourceTree = "<group>"; };
+		C47D8E3B1E7243F00077172F /* WXMapViewMarkerComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXMapViewMarkerComponent.h; sourceTree = "<group>"; };
+		C47D8E3C1E7243F00077172F /* WXMapViewMarkerComponent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXMapViewMarkerComponent.m; sourceTree = "<group>"; };
+		C47D8E3D1E7243F00077172F /* WXMapViewModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXMapViewModule.h; sourceTree = "<group>"; };
+		C47D8E3E1E7243F00077172F /* WXMapViewModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXMapViewModule.m; sourceTree = "<group>"; };
+		C47D8E421E7245CB0077172F /* WXImgLoaderImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WXImgLoaderImpl.h; path = extend/WXImgLoaderImpl.h; sourceTree = "<group>"; };
+		C47D8E431E7245CB0077172F /* WXImgLoaderImpl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WXImgLoaderImpl.m; path = extend/WXImgLoaderImpl.m; sourceTree = "<group>"; };
 		DC5E503C1D0D97130059F0EB /* weex.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = weex.png; sourceTree = "<group>"; };
 		DC5E503D1D0D97130059F0EB /* weex@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "weex@2x.png"; sourceTree = "<group>"; };
 		DC65C4F91CEB032F00B2F84F /* bundlejs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bundlejs; sourceTree = "<group>"; };
@@ -228,6 +240,20 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		C47D8E381E7243F00077172F /* weex-plugin-amap */ = {
+			isa = PBXGroup;
+			children = (
+				C47D8E391E7243F00077172F /* WXMapViewComponent.h */,
+				C47D8E3A1E7243F00077172F /* WXMapViewComponent.m */,
+				C47D8E3B1E7243F00077172F /* WXMapViewMarkerComponent.h */,
+				C47D8E3C1E7243F00077172F /* WXMapViewMarkerComponent.m */,
+				C47D8E3D1E7243F00077172F /* WXMapViewModule.h */,
+				C47D8E3E1E7243F00077172F /* WXMapViewModule.m */,
+			);
+			name = "weex-plugin-amap";
+			path = "extend/weex-plugin-amap";
+			sourceTree = "<group>";
+		};
 		D5ADF0861C77133B00597CA6 /* Source */ = {
 			isa = PBXGroup;
 			children = (
@@ -271,6 +297,9 @@
 		DCABAFF51D0296DB001C8592 /* extend */ = {
 			isa = PBXGroup;
 			children = (
+				C47D8E421E7245CB0077172F /* WXImgLoaderImpl.h */,
+				C47D8E431E7245CB0077172F /* WXImgLoaderImpl.m */,
+				C47D8E381E7243F00077172F /* weex-plugin-amap */,
 				DCABAFF81D029716001C8592 /* component */,
 				DCABAFF71D0296E8001C8592 /* handler */,
 				DCABAFF61D0296E2001C8592 /* module */,
@@ -321,6 +350,7 @@
 				775BEE791C1E8ECC008D1629 /* Resources */,
 				685399B3421CD1410375A2AD /* [CP] Embed Pods Frameworks */,
 				C715566148067A7FFAB7797D /* [CP] Copy Pods Resources */,
+				5CD50C0F9486C6C0C171AFB8 /* [CP] Copy Framework Resources */,
 			);
 			buildRules = (
 			);
@@ -359,7 +389,7 @@
 				84361D431CA10F8E00F43825 /* Resources */,
 				84361D6F1CA10F8E00F43825 /* [CP] Copy Pods Resources */,
 				84361D701CA10F8E00F43825 /* [CP] Embed Pods Frameworks */,
-				567369891CE436EB000A646C /* ShellScript */,
+				F17C3351BE256F56770E8478 /* [CP] Copy Framework Resources */,
 			);
 			buildRules = (
 			);
@@ -381,6 +411,7 @@
 				TargetAttributes = {
 					775BEE7A1C1E8ECC008D1629 = {
 						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = 9Q2CMZTBRL;
 					};
 					775BEE931C1E8ECC008D1629 = {
 						CreatedOnToolsVersion = 7.1.1;
@@ -442,19 +473,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		36DF47C61FC947C616E7CB76 /* [CP] Copy Pods Resources */ = {
+		5CD50C0F9486C6C0C171AFB8 /* [CP] Copy Framework Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "[CP] Copy Pods Resources";
+			name = "[CP] Copy Framework Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WeexDemo/Pods-WeexDemo-resources.sh\"\n";
+			shellScript = "bash -l -c \"ruby \\\"${SRCROOT}/Pods/Target Support Files/Pods-WeexDemo/copy-framework-resources.rb\\\"\"";
 			showEnvVarsInLog = 0;
 		};
 		685399B3421CD1410375A2AD /* [CP] Embed Pods Frameworks */ = {
@@ -469,7 +500,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "myFile=\"XcodeCoverage/exportenv.sh\"\n\nif [ -f \"$myFile\" ]; then\nXcodeCoverage/exportenv.sh\nfi";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WeexDemo/Pods-WeexDemo-frameworks.sh\"\n";
 		};
 		74CC7A221C2C13BF00829368 /* Start Samples */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -557,7 +588,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WeexDemo/Pods-WeexDemo-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WeexDemo/Pods-WeexDemo-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F17C3351BE256F56770E8478 /* [CP] Copy Framework Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Framework Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "bash -l -c \"ruby \\\"${SRCROOT}/Pods/Target Support Files/Pods-WeexUITestDemo/copy-framework-resources.rb\\\"\"";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -567,12 +613,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C47D8E411E7243F00077172F /* WXMapViewModule.m in Sources */,
 				DCABAFF31D029685001C8592 /* WXATLoggerPlugin.m in Sources */,
 				2AE88A2C1C8544E6003329DE /* WXScannerVC.m in Sources */,
+				C47D8E441E7245CB0077172F /* WXImgLoaderImpl.m in Sources */,
 				775BEE861C1E8ECC008D1629 /* WXDemoViewController.m in Sources */,
 				74CC79EB1C2B9E4700829368 /* UIViewController+WXDemoNaviBar.m in Sources */,
 				DCABB0011D02975E001C8592 /* WXEventModule.m in Sources */,
 				7478481E1E0CD4910044500D /* WXSyncTestModule.m in Sources */,
+				C47D8E401E7243F00077172F /* WXMapViewMarkerComponent.m in Sources */,
+				C47D8E3F1E7243F00077172F /* WXMapViewComponent.m in Sources */,
 				775BEE831C1E8ECC008D1629 /* AppDelegate.m in Sources */,
 				DCABAFF41D029685001C8592 /* WXATViewHierarchyPlugin.m in Sources */,
 				775BEE801C1E8ECC008D1629 /* main.m in Sources */,
@@ -711,7 +761,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9Q2CMZTBRL;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -739,9 +789,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 9Q2CMZTBRL;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

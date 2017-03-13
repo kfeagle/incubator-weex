@@ -9,9 +9,7 @@
 #import "AppDelegate.h"
 #import "WXDemoViewController.h"
 #import "UIViewController+WXDemoNaviBar.h"
-#import "WXStreamModule.h"
 #import "WXEventModule.h"
-#import "WXNavigationDefaultImpl.h"
 #import "WXImgLoaderDefaultImpl.h"
 #import "DemoDefine.h"
 #import "WXScannerVC.h"
@@ -20,6 +18,7 @@
 #import <WeexSDK/WeexSDK.h>
 #import <AVFoundation/AVFoundation.h>
 #import <ATSDK/ATManager.h>
+#import "WXImgLoaderImpl.h"
 
 @interface AppDelegate ()
 @end
@@ -99,7 +98,16 @@
     [WXSDKEngine registerComponent:@"select" withClass:NSClassFromString(@"WXSelectComponent")];
     [WXSDKEngine registerModule:@"event" withClass:[WXEventModule class]];
     [WXSDKEngine registerModule:@"syncTest" withClass:[WXSyncTestModule class]];
+    [WXSDKEngine registerModule:@"gcanvas" withClass:NSClassFromString(@"WXGCanvasModule")];
+    [WXSDKEngine registerComponent:@"gcanvas" withClass:NSClassFromString(@"WXGCanvasComponent")];
     
+    [WXSDKEngine registerModule:@"amap" withClass:NSClassFromString(@"WXMapViewModule")];
+    [WXSDKEngine registerComponent:@"weex-amap-marker" withClass:NSClassFromString(@"WXMapViewMarkerComponent")];
+    
+    [WXSDKEngine registerComponent:@"weex-amap" withClass:NSClassFromString(@"WXMapViewComponent")];
+    [WXSDKEngine registerComponent:@"weex-amap" withClass:NSClassFromString(@"WXMapViewComponent")];
+    
+    [WXSDKEngine registerHandler:[WXImgLoaderImpl new] withProtocol:@protocol(WXImgLoaderProtocol)];
 #if !(TARGET_IPHONE_SIMULATOR)
     [self checkUpdate];
 #endif

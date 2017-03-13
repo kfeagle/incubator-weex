@@ -1,13 +1,22 @@
-source 'https://github.com/CocoaPods/Specs.git'
+#source 'https://github.com/CocoaPods/Specs.git'
+ source "git@gitlab.alibaba-inc.com:alipods/specs.git"
+ source "git@gitlab.alibaba-inc.com:alipods/specs-mirror.git"
+#ali_source 'alibaba-specs' #集团内部仓库
+#ali_source 'alibaba-specs-mirror' #官方镜像仓库
 platform :ios, '7.0'
-#inhibit_all_warnings!
+inhibit_all_warnings!
 
 def common
-    pod 'WeexSDK', :path=>'../sdk/'
+    #pod 'WeexSDK',  '0.10.1.1'
+    pod 'WeexSDK', :path=>'../sdk'
     pod 'WXDevtool', '0.9.5'
     pod 'SDWebImage', '3.7.5'
     pod 'SocketRocket', '0.4.2'
     pod 'ATSDK-Weex', '0.0.1'
+    pod 'GCanvas'      
+    pod 'GCanvas4Weex', :path=>'../gcanvas_weex_plugin'
+    
+    pod 'AMap3DMap'
 end
 
 target 'WeexDemo' do

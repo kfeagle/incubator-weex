@@ -1,0 +1,13 @@
+ali_source 'alibaba-specs'
+ali_source 'alibaba-specs-mirror'
+
+platform :ios, '7.0'
+
+inhibit_all_warnings!
+
+target 'GCanvas4Weex' do
+    pod 'WeexSDK'
+    pod 'GCanvas'
+    pod 'SDWebImage'
+end
+
