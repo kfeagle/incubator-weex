@@ -1,11 +1,20 @@
 <template>
+  <div>
   <example-list items="{{items}}" root="{{root}}"></example-list>
+  <!--<image src="{{logoUrl}}" class="logo"></image>-->
+  </div>
+
 </template>
+
+<style>
+
+</style>
 
 <script>
   require('./include/example-list.we');
   module.exports = {
     data: {
+      logoUrl: 'https://alibaba.github.io/weex/img/weex_logo_blue@3x.png',
       root: 'examples',
       items: [
         // FORMAT:
@@ -15,8 +24,12 @@
         // common
 //        {name: 'chat', title: ' Gcanvas chat'},
         {name: 'amap', title: '高德地图'},
-        {name: 'module/websocket-demo', title: 'WebSocket'},
-        {name: 'gcanvasanimation', title: ' Gcanvas Animation'},
+//        {name: 'module/websocket-demo', title: 'chartroom'},
+        {name: 'module/chatroom-demo', title: '聊天室'},
+        {name: 'chart/index', title: 'Gcanvas图表'},
+        {name: 'gcanvasanimation', title: 'Gcanvas 动画'},
+        {name: 'qr', title: '扫码下载App'},
+//        {name: 'test', title: 'test'},
 //        {name: 'hello', title: 'Hello World'},
 //        {name: 'style/index', title: 'Common Style'},
 //        {name: 'animation', title: 'Animation'},

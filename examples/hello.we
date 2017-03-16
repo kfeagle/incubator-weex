@@ -1,5 +1,103 @@
 <template>
-  <div>
-    <text style="font-size:100px;">Hello World.</text>
-  </div>
+    <div class="container">
+        <text style="height:80;font-size:60px;width:750" onclick="insert">Insert item</text>
+        <list class="list" loadmore="loadmore" loadmoreoffset="500">
+            <cell repeat="{{row in rows}}" append="tree">
+                <div class="item">
+                    <text class="item-title">{{row.id}}这是一段比较长的问题，用来说明list在rotate情况下丢失渲染的bug</text>
+                </div>
+            </cell>
+            <cell>
+                <text id="foot">footer</text>
+            </cell>
+        </list>
+    </div>
 </template>
+
+<style>
+    .container{
+        flex:1;
+        justify-content: center;
+        align-items: center;
+        background-color: #f8f8f8;
+        flex-direction: column;
+        border-top-style:solid;
+        border-top-width:2;
+        border-top-color:#DFDFDF;
+    }
+    .list {
+        flex:1;
+        width:750;
+        /*transform:rotate(180deg);*/
+        justify-content: center;
+        align-items: center;
+        background-color: #abcdef;
+        flex-direction: column;
+        border-top-style:solid;
+        border-top-width:2;
+        border-top-color:#DFDFDF;
+    }
+    .row {
+
+    }
+    .item {
+        justify-content: center;
+        border-bottom-width: 2px;
+        border-bottom-color: #c0c0c0;
+        height: 100px;
+        padding:20px;
+        /*transform:rotate(180deg);*/
+    }
+    .item-title {
+        font-size:30px;
+    }
+</style>
+
+<script>
+    var dom = require('@weex-module/dom')
+    module.exports = {
+        created: function() {
+            for(var i=0;i<30;i++) {
+                var data = {id:i};
+                this.rows.push(data);
+            }
+        },
+        methods: {
+            onappear: function (e) {
+                var appearId = this.rows[e.target.attr.index].id;
+                nativeLog('+++++', appearId);
+                var appearIds = this.appearIds;
+                appearIds.push(appearId);
+                this.getMinAndMaxIds(appearIds);
+            },
+            ondisappear:function (e) {
+                var disAppearId = this.rows[e.target.attr.index].id;
+                nativeLog('+++++', disAppearId);
+                var appearIds = this.appearIds;
+                var index = appearIds.indexOf(disAppearId);
+                if (index > -1) {
+                    appearIds.splice(index, 1);
+                }
+                this.getMinAndMaxIds(appearIds);
+            },
+            getMinAndMaxIds:function (appearIds) {
+                appearIds.sort(function(a, b) {
+                    return a - b;
+                });
+                this.appearIds = appearIds;
+                this.appearMax = appearIds[appearIds.length - 1];
+                this.appearMin = appearIds[0];
+            },
+            insert: function(e) {
+                this.rows.unshift({id:999});
+                dom.scrollToElement(this.$el('foot'), { offset: 0 })
+            }
+        },
+        data: {
+            appearMin:1,
+            appearMax:1,
+            appearIds:[],
+            rows:[{id:1}]
+        }
+    }
+</script>

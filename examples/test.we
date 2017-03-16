@@ -3,7 +3,7 @@
     <div id="r">
       <text>{{x}}</text>
       <div style="height: 2000; background-color: #ff0000;"></div>
-      <text onclick="foo">{{x}}</text>
+      <text onclick="foo" style="height: 200; ">{{x}}</text>
     </div>
   </scroller>
 </template>

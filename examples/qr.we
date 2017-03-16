@@ -1,0 +1,33 @@
+<template>
+    <div class="wrapper" onclick="update">
+        <image src="{{logoUrl}}" class="logo"></image>
+        <text class="title">扫码下载app体验</text>
+        <text class="title">联系人：齐山</text>
+        <div style="flex-flow: row">
+            <text class="title" style="font-size: 40;margin-top: 40">相关开发人员</text>
+            <text class="title" style="font-size: 32">gcanvas:      安卓:凯冯 iOS:韦青 h5:伯飞</text>
+            <text class="title" style="font-size: 32">地图:            安卓:卜道 iOS:胜涛 h5:拈笑</text>
+            <text class="title" style="font-size: 32">websocket: 安卓:墨循 iOS:齐山 h5:伯飞 </text>
+        </div>
+    </div>
+</template>
+
+<style>
+    .wrapper {align-items: center; margin-top: 120px;}
+    .title {font-size: 48px;margin-top: 40}
+    .logo {width: 360px; height: 360px;}
+</style>
+
+<script>
+    module.exports = {
+        data: {
+            logoUrl: 'https://raw.githubusercontent.com/kfeagle/firstdemo/master/qrdl.png',
+            target: 'World'
+        },
+        methods: {
+            update: function (e) {
+                this.target = 'Weex'
+            }
+        }
+    }
+</script>

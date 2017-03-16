@@ -45,11 +45,11 @@
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	var __weex_template__ = __webpack_require__(258)
-	var __weex_style__ = __webpack_require__(259)
-	var __weex_script__ = __webpack_require__(260)
+	var __weex_template__ = __webpack_require__(235)
+	var __weex_style__ = __webpack_require__(236)
+	var __weex_script__ = __webpack_require__(237)
 
-	__weex_define__('@weex-component/f1edaa994f4c5a505cfb7f32ca9ee569', [], function(__weex_require__, __weex_exports__, __weex_module__) {
+	__weex_define__('@weex-component/29706d742e69367afe49c8e240836540', [], function(__weex_require__, __weex_exports__, __weex_module__) {
 
 	    __weex_script__(__weex_module__, __weex_exports__, __weex_require__)
 	    if (__weex_exports__.__esModule && __weex_exports__.default) {
@@ -62,11 +62,11 @@
 
 	})
 
-	__weex_bootstrap__('@weex-component/f1edaa994f4c5a505cfb7f32ca9ee569',undefined,undefined)
+	__weex_bootstrap__('@weex-component/29706d742e69367afe49c8e240836540',undefined,undefined)
 
 /***/ },
 
-/***/ 258:
+/***/ 235:
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -115,25 +115,21 @@
 	              ]
 	            }
 	          ]
+	        },
+	        {
+	          "type": "cell",
+	          "append": "tree",
+	          "children": [
+	            {
+	              "type": "text",
+	              "id": "cellfoot",
+	              "style": {
+	                "marginBottom": 40
+	              }
+	            }
+	          ]
 	        }
 	      ]
-	    },
-	    {
-	      "type": "input",
-	      "attr": {
-	        "type": "text",
-	        "placeholder": "请输入聊天信息",
-	        "autofocus": "false",
-	        "value": ""
-	      },
-	      "classList": [
-	        "input"
-	      ],
-	      "events": {
-	        "change": "onchange",
-	        "input": "oninput"
-	      },
-	      "id": "input"
 	    },
 	    {
 	      "type": "div",
@@ -143,16 +139,21 @@
 	      },
 	      "children": [
 	        {
-	          "type": "text",
+	          "type": "input",
+	          "attr": {
+	            "type": "text",
+	            "placeholder": "请输入聊天信息",
+	            "autofocus": "false",
+	            "value": ""
+	          },
 	          "classList": [
-	            "button"
+	            "input"
 	          ],
 	          "events": {
-	            "click": "connect"
+	            "change": "onchange",
+	            "input": "oninput"
 	          },
-	          "attr": {
-	            "value": "connect"
-	          }
+	          "id": "input"
 	        },
 	        {
 	          "type": "text",
@@ -163,31 +164,29 @@
 	            "click": "send"
 	          },
 	          "attr": {
-	            "value": "send"
-	          }
-	        },
-	        {
-	          "type": "text",
-	          "classList": [
-	            "button"
-	          ],
-	          "events": {
-	            "click": "close"
-	          },
-	          "attr": {
-	            "value": "close"
+	            "value": "发送"
 	          }
 	        }
 	      ]
 	    },
 	    {
+	      "type": "image",
+	      "attr": {
+	        "src": function () {return this.logoUrl}
+	      },
+	      "classList": [
+	        "logo"
+	      ]
+	    },
+	    {
 	      "type": "text",
+	      "id": "foot",
 	      "style": {
 	        "color": "#000000",
-	        "height": 80
+	        "height": 40
 	      },
 	      "attr": {
-	        "value": function () {return this.info}
+	        "value": "扫码体验：支持手淘iOS，playground：iOS&安卓"
 	      }
 	    }
 	  ]
@@ -195,29 +194,41 @@
 
 /***/ },
 
-/***/ 259:
+/***/ 236:
 /***/ function(module, exports) {
 
 	module.exports = {
+	  "logo": {
+	    "width": 200,
+	    "height": 200
+	  },
 	  "input": {
 	    "fontSize": 40,
 	    "height": 80,
-	    "width": 600,
-	    "marginBottom": 40
+	    "width": 500,
+	    "marginBottom": 40,
+	    "borderWidth": 2,
+	    "borderStyle": "solid",
+	    "borderColor": "rgb(162,217,192)"
 	  },
 	  "button": {
 	    "fontSize": 36,
 	    "width": 150,
-	    "color": "#41B883",
+	    "height": 80,
 	    "textAlign": "center",
-	    "paddingTop": 10,
-	    "paddingBottom": 10,
+	    "paddingTop": 15,
+	    "paddingBottom": 15,
 	    "borderWidth": 2,
 	    "borderStyle": "solid",
 	    "marginRight": 20,
-	    "marginBottom": 20,
+	    "marginLeft": 20,
 	    "borderColor": "rgb(162,217,192)",
-	    "backgroundColor": "rgba(162,217,192,0.2)"
+	    "backgroundColor": "#00BFFF",
+	    "color": "#FFFFFF",
+	    "fontWeight": "900",
+	    "boxShadow": "1 1px 8px rgba(205, 155, 29, 0.85)",
+	    "backgroundColor:active": "#1E90FF",
+	    "boxShadow:active": "1 4px 6px rgba(255, 99, 71, 0.85)"
 	  },
 	  "container": {
 	    "flex": 1,
@@ -240,17 +251,22 @@
 	  },
 	  "item": {
 	    "justifyContent": "center",
-	    "height": 100,
-	    "padding": 20
+	    "height": 60,
+	    "padding": 20,
+	    "marginTop": 5
 	  },
 	  "item-title": {
-	    "fontSize": 30
+	    "fontSize": 30,
+	    "height": 60,
+	    "paddingTop": 10,
+	    "paddingRight": 20,
+	    "paddingLeft": 20
 	  }
 	}
 
 /***/ },
 
-/***/ 260:
+/***/ 237:
 /***/ function(module, exports) {
 
 	module.exports = function(module, exports, __weex_require__){'use strict';
@@ -259,7 +275,9 @@
 	var websocket = __weex_require__('@weex-module/webSocket');
 	module.exports = {
 	  data: function () {return {
+	    logoUrl: 'https://raw.githubusercontent.com/kfeagle/firstdemo/master/qr.png',
 	    rows: [],
+	    names: ['李霄云', '陈红', '章子怡', '阿兰', '车晓', '杨紫', '孔燕松', '萨顶顶', '古晨', '谭晶', '程琳', '李沁', '谢雨欣', '沈傲君', '汤唯', '周冬雨', '邓婕', '袁泉', '张含韵', '周杰伦', '谢霆锋', '言承旭', '林俊杰', '潘玮柏', '明道', '甄子丹', '周渝民', '罗志祥', '五月天', '刘德华'],
 	    connectinfo: '',
 	    sendinfo: '',
 	    onopeninfo: '',
@@ -271,30 +289,68 @@
 	    info: '',
 	    message: '',
 	    align: 'left',
-	    bg: 'white'
+	    bg: 'white',
+	    from_client_id: '',
+	    name: '',
+	    number: 1
 	  }},
 	  methods: {
-	    insert: function insert(e) {
-	      this.rows.push({ id: 999 });
-	      dom.scrollToElement(this.$el('foot'), { offset: 0 });
+	    ready: function ready() {
+	      var self = this;
+	      self.connect();
 	    },
 	    connect: function connect() {
-	      websocket.WebSocket('ws://115.29.193.48:8088', '');
+	      websocket.WebSocket('ws://chat.workerman.net:7272/', '');
 	      var self = this;
 	      self.info = 'connecting...';
 	      websocket.onopen = function (e) {
 	        self.info = 'websocket open';
+	        var count = self.names.length;
+	        var id = Math.ceil(Math.random() * count);
+	        self.name = self.names[id];
+	        var loginData = '{"type":"login","client_name":"' + self.name + '","room_id":"1"}';
+	        self.login(loginData);
 	      };
+
 	      websocket.onmessage = function (e) {
 	        self.onmessage = e.data;
-
+	        var message = JSON.parse(e.data);
 	        self.align = 'left';
 	        self.bg = 'white';
-	        if (self.sendinfo == self.onmessage) {
+	        var loginMessage = '';
+	        if (message.type == 'login') {
+	          if (self.from_client_id.length == 0) {
+	            self.from_client_id = message.client_id;
+
+	            self.align = 'right';
+	            self.bg = '#00CD00';
+	            loginMessage = self.name + ' 欢迎您加入了聊天室';
+	          } else {
+	            self.info = 'type is login';
+	            self.align = 'left';
+	            self.bg = 'white';
+	            loginMessage = message.client_name + '加入了聊天室';
+	          }
+	        }
+	        if (self.from_client_id == message.from_client_id) {
 	          self.align = 'right';
 	          self.bg = '#00CD00';
 	        }
-	        self.rows.push({ message: e.data, align: self.align, bg: self.bg });
+
+	        if (message.type == 'ping') {}
+
+	        if (message.type == 'login') {
+	          self.rows.push({ message: loginMessage, align: self.align, bg: self.bg });
+	        } else if (message.type == 'logout') {
+	          self.rows.push({ message: message.from_client_name + '离开了聊天室', align: self.align, bg: self.bg });
+	        }
+
+	        if (message.content) {
+	          self.rows.push({ message: message.from_client_name + ':' + message.content, align: self.align, bg: self.bg });
+	          if (self.rows.length > 16) {
+	            dom.scrollToElement(self.$el('cellfoot'), { offset: 0 });
+	          }
+	        }
 	      };
 	      websocket.onerror = function (e) {
 	        self.onerrorinfo = e.data;
@@ -304,11 +360,16 @@
 	        self.onerrorinfo = e.code;
 	      };
 	    },
+	    login: function login(loginInfo) {
+	      websocket.send(loginInfo);
+	    },
 	    send: function send(e) {
+
 	      var input = this.$el('input');
 	      input.blur();
-	      websocket.send(this.txtInput);
-	      this.sendinfo = this.txtInput;
+	      var self = this;
+	      var sendinfo = '{"type":"say","from_client_id":"' + self.from_client_id + '","from_client_name":"' + '游客' + '","to_client_id":"all","content":"' + this.txtInput + '","time":"2017-03-15 01:04:00"}';
+	      websocket.send(sendinfo);
 	    },
 	    oninput: function oninput(event) {
 	      this.txtInput = event.value;
