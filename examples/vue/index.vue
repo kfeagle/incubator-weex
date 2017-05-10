@@ -61,7 +61,7 @@
       if (platform === 'ios') {
         this.items.push({name: root + '/showcase/compositing', title: 'Compositing'})
       }
-      prerender.addTask('http://127.0.0.1:12580/examples/build/vue/syntax/hello-world.js',function(){});
+      prerender.addTask('http://30.8.48.128:12580/examples/build/vue/syntax/hello-world.js',function(){});
 
     }
   }

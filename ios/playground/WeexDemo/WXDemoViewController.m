@@ -129,32 +129,26 @@
     NSMutableDictionary *m = [[WXJSPrerenderManager sharedInstance] prerenderTasksForUrl:[self.url absoluteString]];
     if(m){
         _instance = [m objectForKey:@"instance"];
-//        _instance = [[WXSDKInstance alloc] init];
         _instance.viewController = self;
-//        _instance.needPrerender = NO;
+        _instance.needPrerender = NO;
         _instance.frame = CGRectMake(self.view.frame.size.width-width, 0, width, _weexHeight);
         
         [self.weexView removeFromSuperview];
         self.weexView = [m objectForKey:@"view"];
-        [self.view addSubview:weakSelf.weexView];
+        [self.view addSubview:self.weexView];
         UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, self.weexView);
         _instance.renderFinish = ^(UIView *view) {
             WXLogDebug(@"%@", @"Render Finish...");
-            [weakSelf updateInstanceState:WeexInstanceAppear];
-            [weakSelf excuteModuleTasksForUrl:weakSelf.url];
         };
+        [self updateInstanceState:WeexInstanceAppear];
+        [self excuteModuleTasksForUrl:weakSelf.url];
         WXPerformBlockOnComponentThread(^{
             [weakSelf.instance.componentManager excutePrerenderUITask:[[WXJSPrerenderManager sharedInstance] prerenderUrl:weakSelf.url]];
 
         });
-        
-//        WXComponentManager *manager = _instance.componentManager;
-//        [manager excutePrerenderUITask:[self.url absoluteString]];
-//        [[WXJSPrerenderManager sharedInstance] removePrerenderTaskforUrl:[self.url absoluteString]];
         return;
     }
     [_instance destroyInstance];
-
     _instance = [[WXSDKInstance alloc] init];
     _instance.viewController = self;
     _instance.frame = CGRectMake(self.view.frame.size.width-width, 0, width, _weexHeight);

@@ -24,6 +24,7 @@
 #import "WXSDKEngine.h"
 #import "WXSDKManager.h"
 #import "WXUtility.h"
+#import "WXJSPrerenderManager.h"
 
 @interface WXBaseViewController ()
 
@@ -123,6 +124,31 @@
         return;
     }
 
+    __weak typeof(self) weakSelf = self;
+
+    NSMutableDictionary *m = [[WXJSPrerenderManager sharedInstance] prerenderTasksForUrl:[sourceURL absoluteString]];
+    if(m){
+        
+        _instance = [m objectForKey:@"instance"];
+        _instance.viewController = self;
+        _instance.needPrerender = NO;
+        _instance.frame = CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, self.view.bounds.size.height);
+        
+        [self.weexView removeFromSuperview];
+        self.weexView = [m objectForKey:@"view"];
+        [self.view addSubview:self.weexView];
+        UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, self.weexView);
+        _instance.renderFinish = ^(UIView *view) {
+            WXLogDebug(@"%@", @"Render Finish...");
+        };
+        [self _updateInstanceState:WeexInstanceAppear];
+        [self excuteModuleTasksForUrl:sourceURL];
+        WXPerformBlockOnComponentThread(^{
+            [weakSelf.instance.componentManager excutePrerenderUITask:[[WXJSPrerenderManager sharedInstance] prerenderUrl:sourceURL]];
+            
+        });
+        return;
+    }
     [_instance destroyInstance];
     _instance = [[WXSDKInstance alloc] init];
     _instance.frame = CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, self.view.bounds.size.height);
@@ -139,7 +165,7 @@
     }
     [_instance renderWithURL:[NSURL URLWithString:newURL] options:@{@"bundleUrl":sourceURL.absoluteString} data:nil];
     
-    __weak typeof(self) weakSelf = self;
+//    __weak typeof(self) weakSelf = self;
     _instance.onCreate = ^(UIView *view) {
         [weakSelf.weexView removeFromSuperview];
         weakSelf.weexView = view;
@@ -153,6 +179,13 @@
     _instance.renderFinish = ^(UIView *view) {
         [weakSelf _updateInstanceState:WeexInstanceAppear];
     };
+}
+
+
+- (void)excuteModuleTasksForUrl:(NSURL *)url
+{
+    WXJSPrerenderManager *m = [WXJSPrerenderManager sharedInstance];
+    [m excuteModuleTasksForUrl:[m prerenderUrl:url ]];
 }
 
 - (void)_updateInstanceState:(WXState)state
