@@ -21,13 +21,14 @@
 #import "WXModuleFactory.h"
 #import "WXMonitor.h"
 #import "WXModuleProtocol.h"
+#import "WXAppMonitorProtocol.h"
 #import "WXAssert.h"
 #import "WXUtility.h"
 #import "WXSDKInstance_private.h"
 #import "WXHandlerFactory.h"
 #import "WXValidateProtocol.h"
 #import "WXModalUIModule.h"
-#import "WXJSPrerenderManager.h"
+#import "WXPrerenderManager.h"
 #import "WXModalUIModule.h"
 
 @implementation WXModuleMethod
@@ -90,7 +91,8 @@
         }
         return nil;
     }
-    
+	
+    [self commitModuleInvoke];
     NSInvocation *invocation = [self invocationWithTarget:moduleInstance selector:selector];
     
     if (isSync) {
@@ -99,6 +101,15 @@
     } else {
         [self _dispatchInvocation:invocation moduleInstance:moduleInstance];
         return nil;
+    }
+}
+
+- (void)commitModuleInvoke
+{
+    id<WXAppMonitorProtocol> appMonitorHandler = [WXHandlerFactory handlerForProtocol:@protocol(WXAppMonitorProtocol)];
+    if ([appMonitorHandler respondsToSelector:@selector(commitAppMonitorAlarm:monitorPoint:success:errorCode:errorMsg:arg:)]) {
+        NSString * arg = [NSString stringWithFormat:@"%@.%@", self.moduleName, self.methodName];
+        [appMonitorHandler commitAppMonitorAlarm:@"weex" monitorPoint:@"invokeModule" success:NO errorCode:@"101" errorMsg:self.instance.pageName arg:arg];
     }
 }
 

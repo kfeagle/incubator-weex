@@ -33,7 +33,7 @@
 #import "WXInvocationConfig.h"
 #import "WXHandlerFactory.h"
 #import "WXValidateProtocol.h"
-#import "WXJSPrerenderManager.h"
+#import "WXPrerenderManager.h"
 
 static NSThread *WXComponentThread;
 
@@ -167,19 +167,17 @@ static NSThread *WXComponentThread;
 
 - (void)_addUITask:(void (^)())block
 {
-    
-//    [_uiTaskQueue addObject:block];
-//    return;
     if(!_uiPrerenderTaskQueue){
         _uiPrerenderTaskQueue = [NSMutableDictionary new];
     }
     if(self.weexInstance.needPrerender){
-        NSMutableArray *m = [_uiPrerenderTaskQueue objectForKey:[[WXJSPrerenderManager sharedInstance] prerenderUrl:self.weexInstance.scriptURL]];
-        if (!m){
-            m = [NSMutableArray new];
+        [[WXPrerenderManager sharedInstance] storeInstanceTask:block instanceId:self.weexInstance.instanceId type:PrerenderUITaskType];
+        NSMutableArray<dispatch_block_t> *tasks  = [_uiPrerenderTaskQueue objectForKey:self.weexInstance.scriptURL.absoluteString];
+        if(!tasks){
+            tasks = [NSMutableArray new];
         }
-        [m addObject:block];
-        [_uiPrerenderTaskQueue setValue:m forKey:[[WXJSPrerenderManager sharedInstance] prerenderUrl:self.weexInstance.scriptURL]];
+        [tasks addObject:block];
+        [_uiPrerenderTaskQueue setObject:tasks forKey:self.weexInstance.scriptURL.absoluteString];
     }else{
         [_uiTaskQueue addObject:block];
     }
@@ -187,12 +185,12 @@ static NSThread *WXComponentThread;
 
 - (void)excutePrerenderUITask:(NSString *)url
 {
-    if(url){
-        NSMutableArray *m = [_uiPrerenderTaskQueue objectForKey:[[WXJSPrerenderManager sharedInstance] prerenderUrl:self.weexInstance.scriptURL]];
-        for (id block in m) {
-            [_uiTaskQueue addObject:block];
-        }
+    NSMutableArray *tasks  = [_uiPrerenderTaskQueue objectForKey:self.weexInstance.scriptURL.absoluteString];
+    for (id block in tasks) {
+        [_uiTaskQueue addObject:block];
     }
+    tasks = [NSMutableArray new];
+    [_uiPrerenderTaskQueue setObject:tasks forKey:self.weexInstance.scriptURL.absoluteString];
 }
 
 
@@ -515,7 +513,7 @@ static css_node_t * rootNodeGetChild(void *context, int i)
     [self _addUITask:^{        
         UIView *rootView = instance.rootView;
         
-        WX_MONITOR_INSTANCE_PERF_END(WXPTFirstScreenRender, instance);
+//        WX_MONITOR_INSTANCE_PERF_END(WXPTFirstScreenRender, instance);
         WX_MONITOR_INSTANCE_PERF_END(WXPTAllRender, instance);
         WX_MONITOR_SUCCESS(WXMTJSBridge);
         WX_MONITOR_SUCCESS(WXMTNativeRender);

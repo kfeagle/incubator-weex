@@ -24,7 +24,7 @@
 #import "WXSDKEngine.h"
 #import "WXSDKManager.h"
 #import "WXUtility.h"
-#import "WXJSPrerenderManager.h"
+#import "WXPrerenderManager.h"
 
 @interface WXBaseViewController ()
 
@@ -126,7 +126,7 @@
 
     __weak typeof(self) weakSelf = self;
 
-    NSMutableDictionary *m = [[WXJSPrerenderManager sharedInstance] prerenderTasksForUrl:[sourceURL absoluteString]];
+    NSMutableDictionary *m = [[WXPrerenderManager sharedInstance] prerenderTasksForUrl:[sourceURL absoluteString]];
     if(m){
         
         _instance = [m objectForKey:@"instance"];
@@ -144,7 +144,7 @@
         [self _updateInstanceState:WeexInstanceAppear];
         [self excuteModuleTasksForUrl:sourceURL];
         WXPerformBlockOnComponentThread(^{
-            [weakSelf.instance.componentManager excutePrerenderUITask:[[WXJSPrerenderManager sharedInstance] prerenderUrl:sourceURL]];
+//            [weakSelf.instance.componentManager excutePrerenderUITask:[[WXPrerenderManager sharedInstance] prerenderUrl:sourceURL]];
             
         });
         return;
@@ -153,7 +153,7 @@
     _instance = [[WXSDKInstance alloc] init];
     _instance.frame = CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, self.view.bounds.size.height);
     _instance.pageObject = self;
-    _instance.pageName = [[WXUtility urlByDeletingParameters:sourceURL] absoluteString];
+    _instance.pageName = sourceURL.absoluteString;
     _instance.viewController = self;
     
     NSString *newURL = nil;
@@ -184,7 +184,7 @@
 
 - (void)excuteModuleTasksForUrl:(NSURL *)url
 {
-    WXJSPrerenderManager *m = [WXJSPrerenderManager sharedInstance];
+    WXPrerenderManager *m = [WXPrerenderManager sharedInstance];
     [m excuteModuleTasksForUrl:[m prerenderUrl:url ]];
 }
 

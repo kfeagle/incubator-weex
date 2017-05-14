@@ -25,7 +25,7 @@
 #import <WeexSDK/WXSDKManager.h>
 #import "UIViewController+WXDemoNaviBar.h"
 #import "DemoDefine.h"
-#import "WXJSPrerenderManager.h"
+#import "WXPrerenderManager.h"
 #import "WXSDKInstance_private.h"
 
 @interface WXDemoViewController () <UIScrollViewDelegate, UIWebViewDelegate>
@@ -105,9 +105,7 @@
 
 - (void)dealloc
 {
-    NSMutableDictionary *m = [[WXJSPrerenderManager sharedInstance] prerenderTasksForUrl:[self.url absoluteString]];
-
-    if(!m)
+    if(![[WXPrerenderManager sharedInstance] isTaskExist:[self.url absoluteString]])
     {
         [_instance destroyInstance];
     }
@@ -126,26 +124,25 @@
     
     __weak typeof(self) weakSelf = self;
 
-    NSMutableDictionary *m = [[WXJSPrerenderManager sharedInstance] prerenderTasksForUrl:[self.url absoluteString]];
-    if(m){
-        _instance = [m objectForKey:@"instance"];
+    if([[WXPrerenderManager sharedInstance] isTaskExist:[self.url absoluteString]]){
+        
+        
+        _instance = [[WXPrerenderManager sharedInstance] instanceFromUrl:self.url.absoluteString];
+        WX_MONITOR_INSTANCE_PERF_START(WXPTJSDownload, _instance);
+        WX_MONITOR_INSTANCE_PERF_END(WXPTJSDownload, _instance);
+        WX_MONITOR_INSTANCE_PERF_START(WXPTFirstScreenRender, _instance);
+        WX_MONITOR_INSTANCE_PERF_START(WXPTAllRender, _instance);
         _instance.viewController = self;
         _instance.needPrerender = NO;
         _instance.frame = CGRectMake(self.view.frame.size.width-width, 0, width, _weexHeight);
-        
         [self.weexView removeFromSuperview];
-        self.weexView = [m objectForKey:@"view"];
+        self.weexView = [[WXPrerenderManager sharedInstance] viewFromUrl:self.url.absoluteString];
         [self.view addSubview:self.weexView];
         UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, self.weexView);
         _instance.renderFinish = ^(UIView *view) {
             WXLogDebug(@"%@", @"Render Finish...");
         };
-        [self updateInstanceState:WeexInstanceAppear];
-        [self excuteModuleTasksForUrl:weakSelf.url];
-        WXPerformBlockOnComponentThread(^{
-            [weakSelf.instance.componentManager excutePrerenderUITask:[[WXJSPrerenderManager sharedInstance] prerenderUrl:weakSelf.url]];
-
-        });
+        [[WXPrerenderManager sharedInstance] renderFromCache:[self.url absoluteString]];
         return;
     }
     [_instance destroyInstance];
@@ -194,7 +191,7 @@
 
 - (void)excuteModuleTasksForUrl:(NSURL *)url
 {
-    WXJSPrerenderManager *m = [WXJSPrerenderManager sharedInstance];
+    WXPrerenderManager *m = [WXPrerenderManager sharedInstance];
     [m excuteModuleTasksForUrl:[m prerenderUrl:url ]];
 }
 

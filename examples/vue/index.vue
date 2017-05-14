@@ -9,9 +9,11 @@
       var root = typeof window === 'object' ? 'vue-web/vue' : 'vue'
 
       return {
-        items: [ 
+        items: [
           // common
           {name: root + '/syntax/hello-world', title: 'Hello World'},
+          {name: root + '/syntax/hello-world-1', title: 'Hello World'},
+
           {name: root + '/style/index', title: 'Common Style'},
           {name: root + '/animation', title: 'Animation'},
 
@@ -62,6 +64,8 @@
         this.items.push({name: root + '/showcase/compositing', title: 'Compositing'})
       }
       prerender.addTask('http://30.8.48.128:12580/examples/build/vue/syntax/hello-world.js',function(){});
+
+//      prerender.addTask('http://30.8.48.128:12580/examples/build/vue/syntax/hello-world.js',function(){});
 
     }
   }
