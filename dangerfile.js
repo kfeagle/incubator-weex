@@ -219,6 +219,10 @@ function findReviewer(resolve, reject) {
     number: danger.github.pr.number,
     headers: {Accept: 'application/vnd.github.diff'}
   }, function (err, result) {
+    if (err || !result.data) {
+      console.log("error getting diff content" + err)
+      reject()
+    }
     parseDeleteAndNormalLines(result.data, fileToDeletedLinesMap, fileToNormalLinesMap)
     var promises = danger.git.modified_files.map(function(file) {
       let repoURL = danger.github.pr.base.repo.html_url
