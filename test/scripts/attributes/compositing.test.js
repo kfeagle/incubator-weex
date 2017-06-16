@@ -35,6 +35,7 @@ describe('compositing test', function () {
   before(function () {
     return util.init(driver)
       .get(util.getPage('/attributes/compositing.js'))
+      .source().then( c => {})
       .waitForElementById('test-text',util.getGETActionWaitTimeMills() + 2000,1000)
   });
 
