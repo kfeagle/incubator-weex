@@ -32,9 +32,6 @@
       });
     },
     methods: {
-      add:function () {
-        this.$refs['scene'].addNode({});
-      },
       tap:function (event) {
         this.index = this.index+1;
         if(this.index>3){

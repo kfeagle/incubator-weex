@@ -236,6 +236,7 @@ extern _Nonnull SEL WXSwizzledSelectorForSelector(_Nonnull SEL selector);
  */
 + (void)getIconfont:(NSURL * _Nonnull)fontURL completion:( void(^ _Nullable )(NSURL * _Nonnull url, NSError * _Nullable error)) completionBlock;
 
++ (void)getARImage:(NSURL *)url completion:(void(^)(NSURL *url, NSError *error))completionBlock;
 /**
  * @abstract Returns the main screen's size when the device is in portrait mode,.
  */

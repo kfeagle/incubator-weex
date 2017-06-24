@@ -30,33 +30,6 @@
           name:'red'
         }
       });
-    },
-    methods: {
-      add:function () {
-        this.$refs['scene'].addNode({});
-      },
-      tap:function (event) {
-        this.index = this.index+1;
-        if(this.index>3){
-          this.index = 0;
-        }
-        var color = 'red';
-        if(this.index == 1){
-          color = 'blue';
-        }
-        if(this.index == 2){
-          color = 'green';
-        }
-        if(this.index == 3){
-          color = 'yellow';
-        }
-        this.$refs['scene'].updateNode({
-          name:'color',
-          x:event.touchLocation.x,
-          y:event.touchLocation.y,
-          color:color
-        })
-      }
     }
   }
 </script>

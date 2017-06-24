@@ -590,6 +590,57 @@ static BOOL WXNotStat;
     [iconfontLoader start];
 }
 
+
++ (void)getARImage:(NSURL *)url completion:(void(^)(NSURL *url, NSError *error))completionBlock
+{
+    if ([url isFileURL]) {
+        // local file url
+        NSError * error = nil;
+        if (![WXUtility isFileExist:url.path]) {
+            error = [NSError errorWithDomain:WX_ERROR_DOMAIN code:-1 userInfo:@{@"errMsg":[NSString stringWithFormat:@"local font %@ is't exist", url.absoluteString]}];
+        }
+        completionBlock(url, error);
+        return;
+    }
+    
+    WXResourceRequest *request = [WXResourceRequest requestWithURL:url resourceType:WXResourceTypeFont referrer:@"" cachePolicy:NSURLRequestUseProtocolCachePolicy];
+    
+    request.userAgent = [self userAgent];
+    WXResourceLoader *iconfontLoader = [[WXResourceLoader alloc] initWithRequest:request];
+    iconfontLoader.onFinished = ^(const WXResourceResponse * response, NSData * data) {
+        NSURL * downloadPath = nil;
+        NSError * error = nil;
+        NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse*)response;
+        if (200 == httpResponse.statusCode) {
+            NSString *file = [NSString stringWithFormat:@"%@/%@.zip",WX_FONT_DOWNLOAD_DIR,[WXUtility md5:[url absoluteString]]];
+            downloadPath = [NSURL fileURLWithPath:file];
+            NSFileManager *mgr = [NSFileManager defaultManager];
+            
+            if (![mgr fileExistsAtPath:[file stringByDeletingLastPathComponent]]) {
+                // create font cache directory and its parent if not exist
+                [mgr createDirectoryAtPath:[file stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:&error];
+            }
+            
+            BOOL result = [data writeToFile:downloadPath.path atomically:NO];
+            if (!result) {
+                downloadPath = nil;
+            }
+        } else {
+            if (200 != httpResponse.statusCode) {
+                error = [NSError errorWithDomain:WX_ERROR_DOMAIN code:-1 userInfo:@{@"ErrorMsg": [NSString stringWithFormat:@"can not load the font url %@ ", url.absoluteString]}];
+            }
+        }
+        completionBlock(downloadPath, error);
+        
+    };
+    
+    iconfontLoader.onFailed = ^(NSError* error) {
+        completionBlock(nil, error);
+    };
+    
+    [iconfontLoader start];
+}
+
 + (BOOL)isFileExist:(NSString *)filePath
 {
     return [[NSFileManager defaultManager] fileExistsAtPath:filePath];

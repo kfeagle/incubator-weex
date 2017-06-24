@@ -11,7 +11,7 @@
 #import <ARKit/ARKit.h>
 #import <WeexPluginLoader/WeexPluginLoader.h>
 #import "WXUtility.h"
-#import "SSZipArchive.h"
+#import <WeexSDK/WXComponent+Events.h>
 
 @interface WXSceneComponent()<ARSCNViewDelegate>
 @property(nonatomic, strong) ARSCNView* sceneView;
@@ -26,6 +26,7 @@
 @implementation WXSceneComponent
 WX_PlUGIN_EXPORT_COMPONENT(scene,WXSceneComponent)
 WX_EXPORT_METHOD(@selector(addNode:))
+WX_EXPORT_METHOD(@selector(updateNode:))
 
 - (instancetype)initWithRef:(NSString *)ref type:(NSString *)type styles:(NSDictionary *)styles attributes:(NSDictionary *)attributes events:(NSArray *)events weexInstance:(WXSDKInstance *)weexInstance
 {
@@ -56,10 +57,6 @@ WX_EXPORT_METHOD(@selector(addNode:))
     //    configuration.lightEstimationEnabled = YES;
     configuration.planeDetection = ARPlaneDetectionHorizontal;
     [self.sceneView.session runWithConfiguration:configuration];
-//    [self addNode:@{}];
-//    if(_src){
-//        [self parseSrc];
-//    }
     if(self.tasks){
         for (NSDictionary *option in self.tasks) {
             [self addNodeTask:option];
@@ -69,8 +66,6 @@ WX_EXPORT_METHOD(@selector(addNode:))
     
     self.isViewDidLoad = YES;
 }
-
-
 
 -(void)addNode:(NSDictionary *)options
 {
@@ -86,6 +81,24 @@ WX_EXPORT_METHOD(@selector(addNode:))
     
 }
 
+-(void)updateNode:(NSDictionary *)options
+{
+    CGPoint touchLocation =  CGPointMake([WXConvert CGFloat: [options objectForKey:@"x"]], [WXConvert CGFloat: [options objectForKey:@"y"]]);
+    NSArray *hitResults = [_sceneView hitTest:touchLocation options:nil];
+    
+    if(hitResults&& [hitResults count]>0){
+        
+        SCNHitTestResult *res = hitResults[0];
+        SCNNode *node =res.node;
+        NSArray *materials= node.geometry.materials;
+        for (SCNMaterial *m in materials) {
+            if([m.name isEqualToString:[WXConvert NSString:[options objectForKey:@"name"]]]){
+                m.diffuse.contents = [WXConvert UIColor:[options objectForKey:@"color"]];
+            }
+        }
+    }
+}
+
 -(void)addNodeTask:(NSDictionary *)options
 {
     SCNScene *scene = _sceneView.scene;
@@ -99,7 +112,6 @@ WX_EXPORT_METHOD(@selector(addNode:))
         material.diffuse.contents = [WXConvert UIColor:[contents objectForKey:@"name"]];
     }
     SCNBox *box = [SCNBox boxWithWidth:[WXConvert CGFloat: [options objectForKey:@"width"]] height:[WXConvert CGFloat: [options objectForKey:@"height"]] length:[WXConvert CGFloat: [options objectForKey:@"length"]] chamferRadius:[WXConvert CGFloat: [options objectForKey:@"chamferRadius"]]];
-    
     SCNNode *node = [SCNNode new];
     node.geometry = box;
     node.geometry.materials = @[material];
@@ -114,71 +126,8 @@ WX_EXPORT_METHOD(@selector(addNode:))
 {
     SCNView *sceneView = (SCNView *)recognizer.view ;
     CGPoint touchLocation =  [recognizer locationInView:sceneView];
-    NSArray *hitResults = [sceneView hitTest:touchLocation options:nil];
+    [self fireEvent:@"tap" params:@{@"touchLocation":@{@"x":@(touchLocation.x),@"y":@(touchLocation.y)}}];
     
-    if(hitResults){
-        
-        SCNHitTestResult *res = hitResults[0];
-        SCNNode *node =res.node;
-        NSArray *materials= node.geometry.materials;
-        for (SCNMaterial *m in materials) {
-            if([m.name isEqualToString:@"Color"]){
-                self.index = _index+1;
-                self.index = _index%3;
-                if(_index == 0){
-                    m.diffuse.contents = [UIColor orangeColor];
-                }
-                if(_index == 1){
-                    m.diffuse.contents = [UIColor greenColor];
-                }
-                if(_index == 2){
-                    m.diffuse.contents = [UIColor blueColor];
-                }
-                
-            }
-        }
-        
-    }
-    
-}
-
-
--(void)parseSrc
-{
-    __weak typeof(self) weakSelf = self;
-    NSURL *url = [NSURL URLWithString:_src];
-    [WXUtility getARImage:url completion:^(NSURL * _Nonnull url, NSError * _Nullable error) {
-        if (!error && url) {
-            
-            NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-            NSString *documentsDirectory = [paths objectAtIndex:0];
-            NSError *zipError = nil;
-            [SSZipArchive unzipFileAtPath:url.path toDestination:documentsDirectory overwrite:YES password:nil error:&zipError];
-            
-            if( zipError ){
-                NSLog(@"[GameVC] Something went wrong while unzipping: %@", zipError.debugDescription);
-            }else {
-                NSLog(@"[GameVC] Archive unzipped successfully");
-                [weakSelf startScene];
-                // load success
-                
-            }
-            //        NSAssert(scene, @"failed to load scene named ship.scn");
-        } else {
-            //there was some errors during loading
-            WXLogError(@"load font failed %@",error.description);
-        }
-    }];
-}
-
-
--(void)startScene
-{
-    NSArray  *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *path =[NSString stringWithFormat:@"%@/%@", [paths objectAtIndex:0],_file];
-    SCNScene *scene =[SCNScene sceneWithURL:[NSURL fileURLWithPath:path] options:nil error:nil];
-    NSAssert(scene, @"failed to load scene named ship.scn");
-    self.sceneView.scene = scene;
 }
 
 - (UIView *)loadView

@@ -22,7 +22,8 @@
 #import "UIViewController+WXDemoNaviBar.h"
 #import "WXDemoViewController.h"
 #import "WXDebugTool.h"
-#import <TBWXDevTool/WXDevTool.h>
+//#import <TBWXDevTool/WXDevTool.h>
+#import "WXDevTool.h"
 #import <AudioToolbox/AudioToolbox.h>
 #import <WeexSDK/WeexSDK.h>
 
@@ -101,7 +102,7 @@
         NSArray *urls = [elts.lastObject componentsSeparatedByString:@"="];
         for (NSString *param in urls) {
             if ([param isEqualToString:@"_wx_tpl"]) {
-                transformURL = [[urls lastObject]  stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                transformURL = [[urls lastObject]  stringByRemovingPercentEncoding];
                 break;
             }
         }
@@ -200,7 +201,7 @@
         if([elts count] < 2) continue;
         if ([[elts firstObject] isEqualToString:@"_wx_debug"]) {
             [WXDebugTool setDebug:YES];
-            [WXSDKEngine connectDebugServer:[[elts lastObject]  stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+            [WXSDKEngine connectDebugServer:[[elts lastObject]  stringByRemovingPercentEncoding]];
             if ([[[self.navigationController viewControllers] objectAtIndex:0] isKindOfClass:NSClassFromString(@"WXDemoViewController")]) {
                 WXDemoViewController * vc = (WXDemoViewController*)[[self.navigationController viewControllers] objectAtIndex:0];
                 [vc performSelector:NSSelectorFromString(@"loadRefreshCtl")];
@@ -208,7 +209,7 @@
             }
             return YES;
         } else if ([[elts firstObject] isEqualToString:@"_wx_devtool"]) {
-            NSString *devToolURL = [[elts lastObject]  stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSString *devToolURL = [[elts lastObject]  stringByRemovingPercentEncoding];
             [WXDevTool launchDevToolDebugWithUrl:devToolURL];
             if ([[[self.navigationController viewControllers] objectAtIndex:0] isKindOfClass:NSClassFromString(@"WXDemoViewController")]) {
                 WXDemoViewController * vc = (WXDemoViewController*)[[self.navigationController viewControllers] objectAtIndex:0];

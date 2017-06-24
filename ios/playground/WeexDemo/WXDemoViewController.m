@@ -67,6 +67,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationRefreshInstance:) name:@"RefreshInstance" object:nil];
     
     [self render];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
