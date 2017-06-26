@@ -12,6 +12,8 @@
 #import <WeexPluginLoader/WeexPluginLoader.h>
 #import "WXUtility.h"
 #import <WeexSDK/WXComponent+Events.h>
+#import "WXImgLoaderProtocol.h"
+#import "WXHandlerFactory.h"
 
 @interface WXSceneComponent()<ARSCNViewDelegate>
 @property(nonatomic, strong) ARSCNView* sceneView;
@@ -20,6 +22,7 @@
 @property(nonatomic) NSInteger index;
 @property(nonatomic) BOOL isViewDidLoad;
 @property (nonatomic, strong) NSMutableArray *tasks;
+@property (nonatomic, strong) id<WXImageOperationProtocol> imageOperation;
 
 @end
 
@@ -27,6 +30,17 @@
 WX_PlUGIN_EXPORT_COMPONENT(scene,WXSceneComponent)
 WX_EXPORT_METHOD(@selector(addNode:))
 WX_EXPORT_METHOD(@selector(updateNode:))
+
+
+- (id<WXImgLoaderProtocol>)imageLoader
+{
+    static id<WXImgLoaderProtocol> imageLoader;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        imageLoader = [WXHandlerFactory handlerForProtocol:@protocol(WXImgLoaderProtocol)];
+    });
+    return imageLoader;
+}
 
 - (instancetype)initWithRef:(NSString *)ref type:(NSString *)type styles:(NSDictionary *)styles attributes:(NSDictionary *)attributes events:(NSArray *)events weexInstance:(WXSDKInstance *)weexInstance
 {
@@ -45,10 +59,6 @@ WX_EXPORT_METHOD(@selector(updateNode:))
 -(void)viewDidLoad
 {
     [super viewDidLoad];
-    self.sceneView = [[ARSCNView alloc] initWithFrame:self.view.frame];
-    [self.view addSubview:self.sceneView];
-    self.sceneView.delegate = self;
-    _sceneView.showsStatistics = YES;
     SCNScene *scene = [SCNScene new];
     _sceneView.scene = scene;
     // Run the view's session
@@ -66,6 +76,17 @@ WX_EXPORT_METHOD(@selector(updateNode:))
     
     self.isViewDidLoad = YES;
 }
+
+#pragma mark -
+#pragma mark Private Method
+
+-(NSUInteger)getMask:(NSInteger)index
+{
+    return 1 << index;
+}
+
+#pragma mark -
+#pragma mark AR
 
 -(void)addNode:(NSDictionary *)options
 {
@@ -107,14 +128,43 @@ WX_EXPORT_METHOD(@selector(updateNode:))
     material.name = [WXConvert NSString: [options objectForKey:@"name"]];
     NSDictionary *contents = [options objectForKey:@"contents"];
     NSString *type = [WXConvert NSString:[contents objectForKey:@"type"]];
+    NSString *src = [WXConvert NSString:[contents objectForKey:@"src"]];
     if([@"color" isEqualToString:type])
     {
+        material.diffuse.contents = [WXConvert UIColor:[contents objectForKey:@"name"]];
+    }
+    if([@"image" isEqualToString:type])
+    {
+        __weak typeof(self) weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            weakSelf.imageOperation = [[weakSelf imageLoader] downloadImageWithURL:src imageFrame:CGRectZero userInfo:@{} completed:^(UIImage *image, NSError *error, BOOL finished) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (error) {
+                        return ;
+                    }
+                    //需要继续优化
+                    material.diffuse.contents = image;
+                });
+            }];
+        });
         material.diffuse.contents = [WXConvert UIColor:[contents objectForKey:@"name"]];
     }
     SCNBox *box = [SCNBox boxWithWidth:[WXConvert CGFloat: [options objectForKey:@"width"]] height:[WXConvert CGFloat: [options objectForKey:@"height"]] length:[WXConvert CGFloat: [options objectForKey:@"length"]] chamferRadius:[WXConvert CGFloat: [options objectForKey:@"chamferRadius"]]];
     SCNNode *node = [SCNNode new];
     node.geometry = box;
-    node.geometry.materials = @[material];
+    NSMutableArray *materials = [NSMutableArray arrayWithObject:material];
+    if([WXConvert NSInteger:[options objectForKey:@"materialsCount"]]>0){
+        materials = [NSMutableArray new];
+        for (NSInteger i=0; i< [WXConvert NSInteger:[options objectForKey:@"materialsCount"]]; i++) {
+            [materials addObject:material];
+        }
+    }
+    node.geometry.materials =materials;
+    SCNPhysicsShape *shape = [SCNPhysicsShape shapeWithGeometry:box options:nil];
+    node.physicsBody = [SCNPhysicsBody bodyWithType:[WXConvert NSInteger:[options objectForKey:@"PhysicsBodyType"]] shape:shape];
+    node.physicsBody.affectedByGravity = [WXConvert BOOL:[options objectForKey:@"affectedByGravity"]];
+    node.physicsBody.categoryBitMask= [self getMask:[WXConvert NSInteger:[options objectForKey:@"categoryBitMask"]]];
+    node.physicsBody.contactTestBitMask= [self getMask:[WXConvert NSInteger:[options objectForKey:@"contactTestBitMask"]]];
     NSDictionary *vector = [options objectForKey:@"vector"];
     node.position =SCNVector3Make([WXConvert CGFloat: [vector objectForKey:@"x"]] , [WXConvert CGFloat: [vector objectForKey:@"y"]], [WXConvert CGFloat: [vector objectForKey:@"z"]]);
     [scene.rootNode addChildNode:node];
@@ -138,9 +188,9 @@ WX_EXPORT_METHOD(@selector(updateNode:))
         sceneView.delegate = self;
         NSString *p = [[NSBundle mainBundle]resourcePath];
         NSLog(@"%@",p);
-        self.sceneView.showsStatistics = YES;
-        
         _sceneView = sceneView;
+        _sceneView.showsStatistics = YES;
+        
     }
     return self.sceneView;
 }

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <text style="font-size: 60px;" @click="add">play ground ar demo</text>
-    <scene ref="scene" style="height: 900;width: 750" @tap="tap"></scene>
+    <text style="font-size: 60px;" @click="add">weex 渲染一个矩形</text>
+    <scene ref="scene" style="height: 1100;width: 750" @tap="tap"></scene>
   </div>
 </template>
 

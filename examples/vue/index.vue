@@ -12,6 +12,9 @@
           // common
           {name: root + '/box', title: '渲染一个物体'},
           {name: root + '/boxtap', title: '支持点击交互'},
+
+          {name: root + '/shooter', title: '射击游戏'},
+
           {name: root + '/hello', title: 'Hello World'},
           {name: root + '/style/index', title: 'Common Style'},
           {name: root + '/animation', title: 'Animation'},
