@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" @viewappear="viewappear">
     <navbar
       :dataRole="dataRole"
       :height="height"
@@ -33,6 +33,7 @@
 </style>
 
 <script>
+  var modal = weex.requireModule('modal')
   module.exports = {
     components: {
       navbar: require('./navbar.vue')
@@ -56,7 +57,13 @@
       },
       naviBarLeftItemClick: function (e) {
         this.$emit('naviBarLeftItemClick', e)
-      }
+      },
+      viewappear: function () {
+        modal.toast({
+          'message': 'appear',
+          'duration': 2
+        })
+      },
     }
   }
 </script>

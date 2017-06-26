@@ -1,7 +1,7 @@
 <template>
     <div>
         <text style="font-size: 60px;" @click="add">支持点击交互</text>
-        <scene ref="scene" style="height: 1100;width: 750" @tap="tap"></scene>
+        <scene ref="scene" style="height: 1100;width: 750" @tap="tap" @contact="contact"></scene>
     </div>
 </template>
 
@@ -9,57 +9,62 @@
     module.exports = {
         data: function () {
             return {
-                index: 0
+
+                ship: {
+                    name: 'ship',
+                    width: 0.1,
+                    height: 0.1,
+                    length: 0.1,
+                    PhysicsBodyType: 1,
+                    affectedByGravity: false,
+                    categoryBitMask: 0,
+                    contactTestBitMask: 1,
+                    chamferRadius: 0,
+                    materialsCount: 6,
+                    vector: {
+                        x: Math.random(),
+                        y: Math.random(),
+                        z: -1
+                    },
+                    contents: {
+                        type: 'image',
+                        src: 'https://github.com/kfeagle/firstdemo/blob/master/galaxy.png?raw=true'
+                    }
+                },
+                ball: {
+                    name:'ball',
+                    type:'sphere',
+                    radius:'0.025',
+                    categoryBitMask:1,
+                    contactTestBitMask:0,
+                    PhysicsBodyType:1,
+                    affectedByGravity:false,
+                    contents:{
+                        type:'image',
+                        src:'https://github.com/kfeagle/firstdemo/blob/master/bullet.jpg?raw=true'
+                    },
+                },
+
             };
         },
         mounted: function () {
             console.log('Data observation finished')
-            var posX= Math.random();
-            var posY = Math.random();
-            this.$refs['scene'].addNode({
-                name:'ship',
-                width:0.1,
-                height:0.1,
-                length:0.1,
-                PhysicsBodyType:1,
-                affectedByGravity:true,
-                categoryBitMask:0,
-                contactTestBitMask:1,
-                chamferRadius:0,
-                materialsCount:6,
-                vector:{
-                    x:posX,
-                    y:posY,
-                    z:-1
-                },
-                contents:{
-                    type:'image',
-                    src:'https://github.com/kfeagle/firstdemo/blob/master/galaxy.png?raw=true'
-                }
-            });
+            this.$refs['scene'].addNode(this.ship
+            );
         },
         methods: {
             tap:function (event) {
-                this.index = this.index+1;
-                if(this.index>3){
-                    this.index = 0;
+                this.$refs['scene'].addNode(this.ball);
+            },
+            contact:function (event) {
+                if(event.nodes.nodeA.mask == 0 || event.nodes.nodeB.mask == 0 ){
+                    this.$refs['scene'].removeNode(event.nodes.nodeA.name);
+                    this.$refs['scene'].removeNode(event.nodes.nodeB.name);
+                    this.ship.vector.x = Math.random();
+                    this.ship.vector.y = Math.random();
+                    this.$refs['scene'].addNode(this.ship);
                 }
-                var color = 'red';
-                if(this.index == 1){
-                    color = 'blue';
-                }
-                if(this.index == 2){
-                    color = 'green';
-                }
-                if(this.index == 3){
-                    color = 'yellow';
-                }
-                this.$refs['scene'].updateNode({
-                    name:'color',
-                    x:event.touchLocation.x,
-                    y:event.touchLocation.y,
-                    color:color
-                })
+
             }
         }
     }

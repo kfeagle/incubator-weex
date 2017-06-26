@@ -20,6 +20,7 @@
 </template>
 
 <script>
+  var modal = weex.requireModule('modal')
   var navigator = weex.requireModule('navigator')
   var getBaseURL = require('../include/base-url.js').getBaseURL
   module.exports = {

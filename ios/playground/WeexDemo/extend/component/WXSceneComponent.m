@@ -15,7 +15,7 @@
 #import "WXImgLoaderProtocol.h"
 #import "WXHandlerFactory.h"
 
-@interface WXSceneComponent()<ARSCNViewDelegate>
+@interface WXSceneComponent()<ARSCNViewDelegate,SCNPhysicsContactDelegate,UIGestureRecognizerDelegate>
 @property(nonatomic, strong) ARSCNView* sceneView;
 @property (nonatomic, strong) NSString *src;
 @property (nonatomic, strong) NSString *file;
@@ -30,6 +30,7 @@
 WX_PlUGIN_EXPORT_COMPONENT(scene,WXSceneComponent)
 WX_EXPORT_METHOD(@selector(addNode:))
 WX_EXPORT_METHOD(@selector(updateNode:))
+WX_EXPORT_METHOD(@selector(removeNode:))
 
 
 - (id<WXImgLoaderProtocol>)imageLoader
@@ -149,9 +150,15 @@ WX_EXPORT_METHOD(@selector(updateNode:))
         });
         material.diffuse.contents = [WXConvert UIColor:[contents objectForKey:@"name"]];
     }
-    SCNBox *box = [SCNBox boxWithWidth:[WXConvert CGFloat: [options objectForKey:@"width"]] height:[WXConvert CGFloat: [options objectForKey:@"height"]] length:[WXConvert CGFloat: [options objectForKey:@"length"]] chamferRadius:[WXConvert CGFloat: [options objectForKey:@"chamferRadius"]]];
     SCNNode *node = [SCNNode new];
-    node.geometry = box;
+    node.name = [WXConvert NSString: [options objectForKey:@"name"]];
+    SCNGeometry *geometry ;
+    if([@"sphere" isEqualToString:[WXConvert NSString: [options objectForKey:@"type"]]] ){
+        geometry = [self getSphere:options];
+    }else{
+        geometry = [self getBox:options];
+    }
+    node.geometry =  geometry;
     NSMutableArray *materials = [NSMutableArray arrayWithObject:material];
     if([WXConvert NSInteger:[options objectForKey:@"materialsCount"]]>0){
         materials = [NSMutableArray new];
@@ -160,16 +167,47 @@ WX_EXPORT_METHOD(@selector(updateNode:))
         }
     }
     node.geometry.materials =materials;
-    SCNPhysicsShape *shape = [SCNPhysicsShape shapeWithGeometry:box options:nil];
+    SCNPhysicsShape *shape = [SCNPhysicsShape shapeWithGeometry:geometry options:nil];
     node.physicsBody = [SCNPhysicsBody bodyWithType:[WXConvert NSInteger:[options objectForKey:@"PhysicsBodyType"]] shape:shape];
     node.physicsBody.affectedByGravity = [WXConvert BOOL:[options objectForKey:@"affectedByGravity"]];
     node.physicsBody.categoryBitMask= [self getMask:[WXConvert NSInteger:[options objectForKey:@"categoryBitMask"]]];
     node.physicsBody.contactTestBitMask= [self getMask:[WXConvert NSInteger:[options objectForKey:@"contactTestBitMask"]]];
-    NSDictionary *vector = [options objectForKey:@"vector"];
-    node.position =SCNVector3Make([WXConvert CGFloat: [vector objectForKey:@"x"]] , [WXConvert CGFloat: [vector objectForKey:@"y"]], [WXConvert CGFloat: [vector objectForKey:@"z"]]);
+    if([options objectForKey:@"vector"]){
+        NSDictionary *vector = [options objectForKey:@"vector"];
+        node.position =SCNVector3Make([WXConvert CGFloat: [vector objectForKey:@"x"]] , [WXConvert CGFloat: [vector objectForKey:@"y"]], [WXConvert CGFloat: [vector objectForKey:@"z"]]);
+    }
+    
+    
+    if([@"sphere" isEqualToString:[WXConvert NSString: [options objectForKey:@"type"]]] ){
+        ARFrame *frame = self.sceneView.session.currentFrame;
+        SCNVector3 dir = SCNVector3Make(0, 0, -1);
+        SCNVector3 pos = SCNVector3Make(0, 0, -0.2);
+        if(frame){
+            SCNMatrix4 mat = SCNMatrix4FromMat4(frame.camera.transform);
+            dir = SCNVector3Make(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33);
+            pos = SCNVector3Make(mat.m41, mat.m42, mat.m43);
+        }
+        node.position = pos;
+        [node.physicsBody applyForce:dir impulse:true];
+    }
     [scene.rootNode addChildNode:node];
+    _sceneView.scene.physicsWorld.contactDelegate = self;
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)];
     [self.sceneView addGestureRecognizer:tapGestureRecognizer];
+    
+    
+}
+
+-(SCNBox *)getBox:(NSDictionary *)options
+{
+    SCNBox *box = [SCNBox boxWithWidth:[WXConvert CGFloat: [options objectForKey:@"width"]] height:[WXConvert CGFloat: [options objectForKey:@"height"]] length:[WXConvert CGFloat: [options objectForKey:@"length"]] chamferRadius:[WXConvert CGFloat: [options objectForKey:@"chamferRadius"]]];
+    return box;
+}
+
+-(SCNSphere *)getSphere:(NSDictionary *)options
+{
+    SCNSphere *sphere = [SCNSphere sphereWithRadius:[WXConvert CGFloat: [options objectForKey:@"radius"]]];
+    return sphere;
 }
 
 -(void)tapped:(UITapGestureRecognizer *)recognizer
@@ -194,4 +232,59 @@ WX_EXPORT_METHOD(@selector(updateNode:))
     }
     return self.sceneView;
 }
+
+-(NSInteger)getIndexByMask:(NSInteger )mask
+{
+    NSInteger index = 0;
+    NSInteger record = 1;
+    for (int i = 0; i<32; i++) {
+        if(record<<i == mask){
+            return index;
+        }
+        index ++;
+    }
+    return 32;
+}
+
+- (void)physicsWorld:(SCNPhysicsWorld *)world didBeginContact:(SCNPhysicsContact *)contact
+{
+//    @([self getIndexByMask:contact.nodeA.physicsBody.categoryBitMask])
+    NSDictionary *nodeA = @{@"name":contact.nodeA.name,@"mask":@([self getIndexByMask:contact.nodeA.physicsBody.categoryBitMask])};
+    NSDictionary *nodeB = @{@"name":contact.nodeB.name,@"mask":@([self getIndexByMask:contact.nodeB.physicsBody.categoryBitMask])};
+    [self fireEvent:@"contact" params:@{@"nodes":@{@"nodeA":nodeA,@"nodeB":nodeB}}];
+     NSLog(@"hit test");
+//    if(contact.nodeA.physicsBody.categoryBitMask == 1 << 0 || contact.nodeB.physicsBody.categoryBitMask == 1 << 0 ){
+//        [self removeNodeWithAnimation:contact.nodeB];
+//        //        [self removeNodeWithAnimation:contact.nodeA];
+//
+//        dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 0.5*NSEC_PER_SEC);
+//        dispatch_after(time, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//            [self removeNodeWithAnimation:contact.nodeA];
+//
+////            [self.sceneView.scene.rootNode addChildNode:[self getBox]];
+//        });
+//        NSLog(@"hit test");
+//
+//    }
+}
+
+-(void)removeNode:(NSString *)name
+{
+    for(SCNNode *node in _sceneView.scene.rootNode.childNodes){
+        if([node.name isEqualToString:name]){
+            [self removeNodeWithAnimation:node];
+        }
+    }
+}
+
+-(void)removeNodeWithAnimation:(SCNNode *)node
+{
+    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 0.5*NSEC_PER_SEC);
+    dispatch_after(time, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [node removeFromParentNode];
+        
+    });
+    
+}
+
 @end
