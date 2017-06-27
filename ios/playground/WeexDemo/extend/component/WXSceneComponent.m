@@ -273,15 +273,20 @@ WX_EXPORT_METHOD(@selector(removeNode:))
     for(SCNNode *node in _sceneView.scene.rootNode.childNodes){
         if([node.name isEqualToString:name]){
             [self removeNodeWithAnimation:node];
+            
         }
     }
 }
 
 -(void)removeNodeWithAnimation:(SCNNode *)node
 {
+    
+//    return;
     dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 0.5*NSEC_PER_SEC);
     dispatch_after(time, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [node removeFromParentNode];
+        NSLog(@"%@",node.name);
+        [self fireEvent:@"removeNode" params:@{@"node":@{@"name":node.name}}];
         
     });
     

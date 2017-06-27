@@ -1,7 +1,7 @@
 <template>
     <div>
         <text style="font-size: 60px;" @click="add">支持点击交互</text>
-        <scene ref="scene" style="height: 1100;width: 750" @tap="tap" @contact="contact"></scene>
+        <scene ref="scene" style="height: 1100;width: 750" @tap="tap" @contact="contact" @removeNode="removeNode"></scene>
     </div>
 </template>
 
@@ -9,6 +9,7 @@
     module.exports = {
         data: function () {
             return {
+                isAdd:true,
 
                 ship: {
                     name: 'ship',
@@ -58,11 +59,23 @@
             },
             contact:function (event) {
                 if(event.nodes.nodeA.mask == 0 || event.nodes.nodeB.mask == 0 ){
+
+                    this.isAdd = false;
                     this.$refs['scene'].removeNode(event.nodes.nodeA.name);
                     this.$refs['scene'].removeNode(event.nodes.nodeB.name);
                     this.ship.vector.x = Math.random();
                     this.ship.vector.y = Math.random();
-                    this.$refs['scene'].addNode(this.ship);
+                }
+
+            },
+            removeNode:function (event) {
+                if(event.node.name == 'ship' ){
+                    var self = this;
+                    if(!self.isAdd){
+                        self.$refs['scene'].addNode(self.ship);
+                        self.isAdd = true;
+
+                    }
                 }
 
             }
